@@ -1,10 +1,7 @@
-// import { Currency } from "./Currency";
-
-// type CurrencyResponse = Array<Currency>
-
-export async function getCurrencys() {
-  const response = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL');
+export async function getCurrencysQuotes() {
+  const response = await fetch('https://economia.awesomeapi.com.br/last/BTC-BRL,EUR-BRL,USD-BRL');
   if (response.ok) {
-    return response.json();
+    const newData = await response.json()
+    return { ...newData, timestamp: new Date().toISOString() };
   }
 }

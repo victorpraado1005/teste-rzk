@@ -1,6 +1,9 @@
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+
 import { useQuery } from "@tanstack/react-query";
-import { getCurrencys } from "../services/currencyService";
+import { getCurrencysQuotes } from "../services/currencyService";
 import { useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 interface currencyProps {
   USDBRL: {
@@ -45,40 +48,79 @@ interface currencyProps {
 }
 
 export function Home() {
+  // const dataLine = [{ name: 'Page A', uv: 400, pv: 2400, amt: 2400 }];
+  const [selectedCurrency, setSelectedCurrency] = useState('BTC')
   const { data, isLoading, isError } = useQuery<currencyProps>({
-    queryKey: ['dados'],
-    queryFn: getCurrencys,
+    queryKey: ['currencyQuotes'],
+    queryFn: getCurrencysQuotes,
+    refetchInterval: 5000,
   });
-  const [currencys, setCurrencys] = useState<currencyProps[]>([]);
+  const [currencyQuotes, setCurrencysQuotes] = useState<currencyProps[]>([]);
 
   useEffect(() => {
     if (data) {
-      setCurrencys(prevData => [...prevData, data]);
+      setCurrencysQuotes(prevData => [...prevData, data]);
     }
   }, [data]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getCurrencys().then(newData => {
-        setCurrencys(prevData => [...prevData, newData]);
-      });
-    }, 30000);
+  const cotacoesBTC = currencyQuotes.filter(item => item.BTCBRL)
+    .map(item => item.BTCBRL);
 
-    return () => clearInterval(interval);
-  }, []);
+  const cotacoesUSD = currencyQuotes.filter(item => item.USDBRL)
+    .map(item => item.USDBRL);
+
+  const cotacoesEUR = currencyQuotes.filter(item => item.EURBRL)
+    .map(item => item.EURBRL);
 
   if (isLoading) return <div>Carregando...</div>;
   if (isError) return <div>Erro ao carregar os dados</div>;
 
   return (
-    <div>
-      <h1>Dados da API</h1>
+    <div className=''>
+      <h1 className="border-2 border-sky-900 w-12">BTC</h1>
+      <Select defaultValue='BTC' onValueChange={(value) => setSelectedCurrency(value)} >
+        <SelectTrigger>
+          <SelectValue placeholder='Selecione a moeda' />
+        </SelectTrigger>
+
+        <SelectContent>
+          <SelectItem value="BTC">BTC</SelectItem>
+          <SelectItem value="USD">USD</SelectItem>
+          <SelectItem value="EUR">EUR</SelectItem>
+        </SelectContent>
+      </Select>
       <div>
-        {currencys.length > 0 && currencys.map((item, index) => (
-          <div key={index}>
-            <span>{item.BTCBRL.ask}</span>
+        {selectedCurrency === 'BTC' ? (
+          <div>
+            <LineChart width={600} height={300} data={cotacoesBTC}>
+              <Line type="monotone" dataKey="ask" stroke="#8884d8" />
+              <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
+              <XAxis dataKey="create_date" allowDecimals={false} />
+              <YAxis dataKey="ask" />
+              <Tooltip />
+            </LineChart>
           </div>
-        ))}
+        ) : selectedCurrency === 'USD' ? (
+          <div>
+            <LineChart width={600} height={300} data={cotacoesUSD}>
+              <Line type="monotone" dataKey="ask" stroke="#8884d8" />
+              <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
+              <XAxis dataKey="create_date" allowDecimals={false} />
+              <YAxis dataKey="ask" />
+              <Tooltip />
+            </LineChart>
+          </div>
+        ) : (
+          <div>
+            <LineChart width={600} height={300} data={cotacoesEUR}>
+              <Line type="monotone" dataKey="ask" stroke="#8884d8" />
+              <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
+              <XAxis dataKey="create_date" allowDecimals={false} />
+              <YAxis dataKey="ask" />
+              <Tooltip />
+            </LineChart>
+          </div>
+        )}
       </div>
     </div>
   )
