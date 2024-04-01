@@ -54,7 +54,7 @@ export function Home() {
   const { data, isLoading, isError } = useQuery<currencyProps>({
     queryKey: ['currencyQuotes'],
     queryFn: getCurrencysQuotes,
-    refetchInterval: 5000,
+    refetchInterval: 30000, // 30 segundos
   });
   const [currencyQuotes, setCurrencysQuotes] = useState<currencyProps[]>([]);
   const [lastCurrencyQuote, setLastCurrencyQuote] = useState<currencyProps[]>([]);
