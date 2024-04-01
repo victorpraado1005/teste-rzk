@@ -3,8 +3,9 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts'
 import { useQuery } from "@tanstack/react-query";
 import { getCurrencysQuotes } from "../services/currencyService";
 import { useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import * as Select from '@radix-ui/react-select';
 import logo from '@/assets/logo.svg';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 
 interface currencyProps {
   USDBRL: {
@@ -103,24 +104,43 @@ export function Home() {
           )}
         </div>
         <div className=''>
-          <Select defaultValue='BTC' onValueChange={(value) => setSelectedCurrency(value)} >
-            <SelectTrigger className='border-2 border-green-500 w-40 h-8' >
-              <SelectValue placeholder='Selecione a moeda' />
-            </SelectTrigger>
+          <Select.Root defaultValue='BTC' onValueChange={(value) => setSelectedCurrency(value)} >
+            <Select.Trigger className='inline-flex items-center justify-between px-[15px] leading-none gap-[5px] border-2 border-green-rzk rounded-md w-48 h-10 text-green-rzk outline-none' >
+              <Select.Value placeholder='Selecione sua moeda' className='w-48' />
+              <Select.Icon>
+                <ChevronDownIcon />
+              </Select.Icon>
+            </Select.Trigger>
 
-            <SelectContent>
-              <SelectItem value="BTC">BTC</SelectItem>
-              <SelectItem value="USD">USD</SelectItem>
-              <SelectItem value="EUR">EUR</SelectItem>
-            </SelectContent>
-          </Select>
+            <Select.Portal>
+              <Select.Content className='overflow-hidden w-48 text-center rounded-md bg-green-rzk text-blue-rzk'>
+                <Select.Viewport className="p-[5px]">
+                  <Select.Item value="BTC">
+                    <Select.ItemText>
+                      BTC
+                    </Select.ItemText>
+                  </Select.Item>
+                  <Select.Item value="USD">
+                    <Select.ItemText>
+                      USD
+                    </Select.ItemText>
+                  </Select.Item>
+                  <Select.Item value="EUR">
+                    <Select.ItemText>
+                      EUR
+                    </Select.ItemText>
+                  </Select.Item>
+                </Select.Viewport>
+              </Select.Content>
+            </Select.Portal>
+          </Select.Root>
         </div>
 
         <div>
           {selectedCurrency === 'BTC' ? (
             <div>
-              <LineChart width={600} height={300} data={cotacoesBTC}>
-                <Line type="monotone" dataKey="ask" stroke="#8884d8" />
+              <LineChart width={600} height={350} data={cotacoesBTC}>
+                <Line type="monotone" dataKey="ask" stroke="#5ABF9A" />
                 <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
                 <XAxis dataKey="create_date" allowDecimals={false} />
                 <YAxis dataKey="ask" />
@@ -129,8 +149,8 @@ export function Home() {
             </div>
           ) : selectedCurrency === 'USD' ? (
             <div>
-              <LineChart width={600} height={300} data={cotacoesUSD}>
-                <Line type="monotone" dataKey="ask" stroke="#8884d8" />
+              <LineChart width={600} height={350} data={cotacoesUSD}>
+                <Line type="monotone" dataKey="ask" stroke="#5ABF9A" />
                 <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
                 <XAxis dataKey="create_date" allowDecimals={false} />
                 <YAxis dataKey="ask" />
@@ -139,8 +159,8 @@ export function Home() {
             </div>
           ) : (
             <div>
-              <LineChart width={600} height={300} data={cotacoesEUR}>
-                <Line type="monotone" dataKey="ask" stroke="#8884d8" />
+              <LineChart width={600} height={350} data={cotacoesEUR}>
+                <Line type="monotone" dataKey="ask" stroke="#5ABF9A" />
                 <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
                 <XAxis dataKey="create_date" allowDecimals={false} />
                 <YAxis dataKey="ask" />
